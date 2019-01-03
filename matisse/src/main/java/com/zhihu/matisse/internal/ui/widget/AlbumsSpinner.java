@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.zhihu.matisse.internal.ui.widget;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.database.Cursor;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.ListPopupWindow;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
+import android.widget.PopupWindow.OnDismissListener;
 import android.widget.TextView;
-
 import com.zhihu.matisse.R;
 import com.zhihu.matisse.internal.entity.Album;
 import com.zhihu.matisse.internal.utils.Platform;
@@ -38,14 +38,26 @@ public class AlbumsSpinner {
     private TextView mSelected;
     private ListPopupWindow mListPopupWindow;
     private AdapterView.OnItemSelectedListener mOnItemSelectedListener;
+    private final Drawable mDrawableUp;
+    private final Drawable mDrawableDown;
+    
+    public AlbumsSpinner(Context context) {
 
-    public AlbumsSpinner(@NonNull Context context) {
+        // 设置收起图标
+        mDrawableUp = context.getResources().getDrawable(
+                R.drawable.icon_picture_selector_up);
+        mDrawableUp.setBounds(0, 0, dip2px(context, 12),
+                dip2px(context, 7));
+        // 设置展开图标
+        mDrawableDown = context.getResources().getDrawable(
+                R.drawable.icon_picture_selector_down);
+        mDrawableDown.setBounds(0, 0, dip2px(context, 12),
+                dip2px(context, 7));
+
         mListPopupWindow = new ListPopupWindow(context, null, R.attr.listPopupWindowStyle);
         mListPopupWindow.setModal(true);
-        float density = context.getResources().getDisplayMetrics().density;
-        mListPopupWindow.setContentWidth((int) (216 * density));
-        mListPopupWindow.setHorizontalOffset((int) (16 * density));
-        mListPopupWindow.setVerticalOffset((int) (-48 * density));
+        mListPopupWindow.setContentWidth(LayoutParams.MATCH_PARENT);
+        // mListPopupWindow.setVerticalOffset((int) (-48 * density));
 
         mListPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -55,6 +67,13 @@ public class AlbumsSpinner {
                 if (mOnItemSelectedListener != null) {
                     mOnItemSelectedListener.onItemSelected(parent, view, position, id);
                 }
+            }
+        });
+        mListPopupWindow.setOnDismissListener(new OnDismissListener() {
+
+            @Override
+            public void onDismiss() {
+                mSelected.setCompoundDrawables(null, null, mDrawableDown, null);
             }
         });
     }
@@ -78,11 +97,9 @@ public class AlbumsSpinner {
             mSelected.setText(displayName);
         } else {
             if (Platform.hasICS()) {
-                mSelected.setAlpha(0.0f);
                 mSelected.setVisibility(View.VISIBLE);
                 mSelected.setText(displayName);
-                mSelected.animate().alpha(1.0f).setDuration(context.getResources().getInteger(
-                        android.R.integer.config_longAnimTime)).start();
+              
             } else {
                 mSelected.setVisibility(View.VISIBLE);
                 mSelected.setText(displayName);
@@ -94,24 +111,19 @@ public class AlbumsSpinner {
     public void setAdapter(CursorAdapter adapter) {
         mListPopupWindow.setAdapter(adapter);
         mAdapter = adapter;
+        if (mListPopupWindow.getListView() != null) {
+            mListPopupWindow.getListView().setVerticalScrollBarEnabled(false);
+        }
     }
 
     public void setSelectedTextView(TextView textView) {
         mSelected = textView;
-        // tint dropdown arrow icon
-        Drawable[] drawables = mSelected.getCompoundDrawables();
-        Drawable right = drawables[2];
-        TypedArray ta = mSelected.getContext().getTheme().obtainStyledAttributes(
-                new int[]{R.attr.album_element_color});
-        int color = ta.getColor(0, 0);
-        ta.recycle();
-        right.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-
         mSelected.setVisibility(View.GONE);
         mSelected.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+                mSelected.setCompoundDrawables(null, null,mDrawableUp , null);
                 int itemHeight = v.getResources().getDimensionPixelSize(R.dimen.album_item_height);
                 mListPopupWindow.setHeight(
                         mAdapter.getCount() > MAX_SHOWN_COUNT ? itemHeight * MAX_SHOWN_COUNT
@@ -124,6 +136,18 @@ public class AlbumsSpinner {
 
     public void setPopupAnchorView(View view) {
         mListPopupWindow.setAnchorView(view);
+        mListPopupWindow.setDropDownGravity(Gravity.TOP);
+    }
+
+    /**
+     * @param context
+     * @param dipValue
+     * @return
+     * @Description: dip转为px
+     */
+    public static int dip2px(Context context, float dipValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dipValue * scale + 0.5f);
     }
 
 }

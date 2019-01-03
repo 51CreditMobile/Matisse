@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.zhihu.matisse.engine.impl;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.widget.ImageView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
+import com.bumptech.glide.request.RequestOptions;
 import com.zhihu.matisse.engine.ImageEngine;
 
 /**
@@ -29,53 +30,64 @@ import com.zhihu.matisse.engine.ImageEngine;
  */
 
 public class GlideEngine implements ImageEngine {
-
+    
     @Override
-    public void loadThumbnail(Context context, int resize, Drawable placeholder, ImageView imageView, Uri uri) {
+    public void loadThumbnail(Context context, int resize, Drawable placeholder,
+        ImageView imageView, Uri uri) {
+        RequestOptions options = new RequestOptions();
+        options.placeholder(placeholder);
+        options.centerCrop();
+        options.override(resize, resize);
         Glide.with(context)
-                .load(uri)
-                .asBitmap()  // some .jpeg files are actually gif
-                .placeholder(placeholder)
-                .override(resize, resize)
-                .centerCrop()
-                .into(imageView);
+             .asBitmap()
+             .load(uri)
+             .apply(options)
+             .into(imageView);
     }
-
+    
     @Override
-    public void loadGifThumbnail(Context context, int resize, Drawable placeholder, ImageView imageView,
-                                 Uri uri) {
+    public void loadGifThumbnail(Context context, int resize, Drawable placeholder,
+        ImageView imageView,
+        Uri uri) {
+        RequestOptions options = new RequestOptions();
+        options.placeholder(placeholder);
+        options.centerCrop();
+        options.override(resize, resize);
         Glide.with(context)
-                .load(uri)
-                .asBitmap()
-                .placeholder(placeholder)
-                .override(resize, resize)
-                .centerCrop()
-                .into(imageView);
+             .asBitmap()
+             .load(uri)
+             .apply(options)
+             .into(imageView);
     }
-
+    
     @Override
     public void loadImage(Context context, int resizeX, int resizeY, ImageView imageView, Uri uri) {
+        RequestOptions options = new RequestOptions();
+        options.centerCrop();
+        options.override(resizeX, resizeY);
+        options.priority(Priority.HIGH);
         Glide.with(context)
-                .load(uri)
-                .override(resizeX, resizeY)
-                .priority(Priority.HIGH)
-                .fitCenter()
-                .into(imageView);
+             .load(uri)
+             .apply(options)
+             .into(imageView);
     }
-
+    
     @Override
     public void loadGifImage(Context context, int resizeX, int resizeY, ImageView imageView, Uri uri) {
+        
+        RequestOptions options = new RequestOptions();
+        options.override(resizeX, resizeY);
+        options.priority(Priority.HIGH);
         Glide.with(context)
-                .load(uri)
-                .asGif()
-                .override(resizeX, resizeY)
-                .priority(Priority.HIGH)
-                .into(imageView);
+             .asGif()
+             .load(uri)
+             .apply(options)
+             .into(imageView);
     }
-
+    
     @Override
     public boolean supportAnimatedGif() {
         return true;
     }
-
+    
 }

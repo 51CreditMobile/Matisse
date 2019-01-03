@@ -21,25 +21,55 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+
+    <RelativeLayout
+        android:layout_alignParentTop="true"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?colorPrimary"
-        android:elevation="4dp"
-        android:theme="?toolbar"
-        tools:targetApi="lollipop">
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:background="#ffffff"
+        >
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:padding="10dp"
+            android:layout_width="30dp"
+            android:layout_height="38dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/icon_picture_selector_back"
+            />
+
 
         <TextView
             android:id="@+id/selected_album"
             android:layout_width="wrap_content"
-            android:layout_height="?actionBarSize"
-            android:drawableRight="@drawable/ic_arrow_drop_down_white_24dp"
-            android:foreground="?selectableItemBackground"
+            android:layout_height="match_parent"
+            android:text="全部图片"
+            android:singleLine="true"
+            android:layout_marginLeft="18dp"
+            android:layout_centerInParent="true"
+            android:drawableRight="@drawable/icon_picture_selector_down"
+            android:drawablePadding="10dp"
             android:gravity="center"
-            android:textColor="?attr/album.element.color"
-            android:textSize="20sp" />
-    </android.support.v7.widget.Toolbar>
+            android:textColor="#333333"
+            android:textSize="16sp"
+            />
+
+
+
+    </RelativeLayout>
+
+
+    <View
+        android:id="@+id/viewTitlebarLine"
+        android:layout_below="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#e6e6e6"
+        android:visibility="visible"
+        />
 
     <FrameLayout
         android:id="@+id/bottom_toolbar"
@@ -64,7 +94,7 @@
         <LinearLayout
             android:padding="16dp"
             android:id="@+id/originalLayout"
-            android:visibility="visible"
+            android:visibility="gone"
             android:orientation="horizontal"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
@@ -75,6 +105,7 @@
 
             <com.zhihu.matisse.internal.ui.widget.CheckRadioView
                 android:id="@+id/original"
+                android:visibility="gone"
                 android:src="@drawable/ic_preview_radio_off"
                 android:layout_gravity="center_vertical"
                 android:layout_width="16dp"
@@ -110,7 +141,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_toolbar"
-        android:layout_below="@id/toolbar"
+        android:layout_below="@id/viewTitlebarLine"
         android:visibility="gone" />
 
     <FrameLayout
@@ -118,7 +149,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_toolbar"
-        android:layout_below="@id/toolbar"
+        android:layout_below="@id/viewTitlebarLine"
         android:visibility="gone">
 
         <TextView

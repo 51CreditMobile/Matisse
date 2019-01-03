@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 <resources>
-    <string name="album_name_all">全部</string>
+    <string name="album_name_all">全部图片</string>
 
     <string name="button_preview">預覽</string>
     <string name="button_apply_default">使用</string>
